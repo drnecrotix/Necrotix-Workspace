@@ -70,6 +70,8 @@ export async function POST(request: Request) {
         sortOrder: index,
         description: `Imported from NecrotixLab service request ${payload.reference}`,
       })) },
+      milestones: { create: { title: "Project setup", status: "ACTIVE", sortOrder: 0 } },
+      clientActions: { create: { title: "Review the imported project scope", description: "Confirm that the selected services and project requirements are correct." } },
       accessTokens: { create: { tokenHash: token.hash, expiresAt } },
       events: { create: { type: "HANDOFF_RECEIVED", message: "Project created from NecrotixLab Services" } },
     }});

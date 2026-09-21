@@ -9,12 +9,18 @@ When a service request is accepted in NecrotixLab, the server sends a signed, on
 ## Current foundation
 
 - Operations dashboard for projects, tasks and client work
+- Database-backed delivery metrics and recent activity
+- Five-column project task board with auditable status changes
+- Milestones and client action requests
+- Client-visible comments and private internal notes
+- Client completion flow for requested actions
+- Version-ready file metadata model with a storage-provider boundary
 - Private client project view with hashed, expiring access tokens
 - HMAC-SHA256 integration endpoint with five-minute timestamp tolerance
 - Nonce and service-request replay protection
 - Idempotent project creation
 - Health endpoint with database connectivity status
-- PostgreSQL data model for clients, projects, tasks, events and integration receipts
+- PostgreSQL data model for clients, projects, tasks, milestones, comments, actions, attachments, events and integration receipts
 - CI for lint, type checking, unit tests and production build
 
 ## Integration contract
@@ -51,9 +57,10 @@ Open `http://localhost:3000`. Admin access uses the server-configured `ADMIN_ACC
 
 ## Roadmap
 
-- Editable project and task boards
-- Client comments, approvals and secure file delivery
-- Time tracking, milestones and invoices
+- Drag-and-drop task ordering and reusable project templates
+- Client approvals, change requests and secure object-storage uploads
+- Time tracking, budget stages and invoices
+- Calendar, saved filters and scheduled reminders
 - Outbound signed status webhooks to NecrotixLab
 - Role-based accounts and two-factor authentication
 
