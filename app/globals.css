@@ -72,5 +72,36 @@ select:focus,input:focus,textarea:focus { outline:2px solid #b8ff3d55; border-co
 .services.single { grid-template-columns:1fr; }
 .client-details { margin-top:16px; }
 .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
-@media(max-width:850px){.shell{display:block}.sidebar{height:auto;position:static;border-right:0;border-bottom:1px solid var(--line)}.nav{display:flex;overflow:auto;margin-top:22px}.side-foot{display:none}.metrics{grid-template-columns:repeat(2,1fr)}.workspace,.detail-grid{grid-template-columns:1fr}.board{grid-template-columns:repeat(5,260px)}}
-@media(max-width:520px){.metrics,.services{grid-template-columns:1fr}.main{padding:24px 16px}.topbar{align-items:flex-start}.button{font-size:12px}.project-page{padding:22px 14px 60px}.action-card{align-items:flex-start;flex-direction:column}.action-card form,.action-card button{width:100%}.inline-form{align-items:stretch;flex-direction:column}}
+.draggable { cursor:grab; transition:opacity .2s,border-color .2s,transform .2s; }
+.draggable:active { cursor:grabbing; border-color:var(--acid); transform:scale(.98); }
+.drag-hint { display:block; margin-top:14px; color:#647067; font:700 9px ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; }
+.board.is-saving { opacity:.68; }
+.change-request { border-top:1px solid var(--line); padding:15px 0; }
+.change-request p { color:#c8cec9; line-height:1.55; white-space:pre-wrap; }
+.form-columns { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.quote { display:flex; justify-content:space-between; gap:12px; padding:11px; background:#151b10; border:1px solid #344126; border-radius:8px; margin-top:12px; }
+.decision-row { display:flex; gap:8px; margin-top:12px; }
+.installer { min-height:100vh; max-width:1240px; padding:34px clamp(18px,5vw,72px) 80px; margin:auto; }
+.installer>header { display:flex; align-items:center; justify-content:space-between; }
+.installer-grid { display:grid; grid-template-columns:1.25fr .75fr; gap:clamp(28px,6vw,90px); align-items:center; padding-top:60px; }
+.installer h1 { margin:18px 0; }
+.install-steps { list-style:none; padding:0; margin:38px 0 0; display:grid; grid-template-columns:1fr 1fr; gap:10px; counter-reset:install; }
+.install-steps li { counter-increment:install; border:1px solid var(--line); border-radius:12px; padding:16px; display:grid; gap:7px; }
+.install-steps li:before { content:"0" counter(install); color:var(--acid); font:700 10px ui-monospace,monospace; letter-spacing:.14em; }
+.install-steps span,.small { font-size:12px; line-height:1.55; }
+.install-form { display:grid; gap:18px; }
+.install-form label { display:block; margin-bottom:8px; font-size:12px; color:#c8cec9; }
+.form-error { color:#ff7b72; font-size:13px; }
+.update-layout { display:grid; grid-template-columns:1.4fr .6fr; gap:16px; align-items:start; }
+.update-layout h2 { margin:8px 0; font-size:28px; }
+.update-state { border:1px solid var(--line); border-radius:12px; padding:15px; margin:20px 0; }
+.update-state p { color:var(--muted); margin-bottom:0; }
+.update-state.available { border-color:#596d36; background:#141b0d; }
+.update-state.current { border-color:#245947; background:#0c1814; }
+.update-state.error { border-color:#653535; background:#1b0f0f; }
+.release-notes { color:#c8cec9; line-height:1.8; padding-left:20px; }
+.pipeline { margin:0; padding:0; list-style:none; counter-reset:pipe; }
+.pipeline li { counter-increment:pipe; border-top:1px solid var(--line); padding:13px 0; color:#c8cec9; }
+.pipeline li:before { content:counter(pipe); display:inline-grid; place-items:center; width:22px; height:22px; margin-right:9px; border:1px solid #40512b; color:var(--acid); border-radius:50%; font-size:10px; }
+@media(max-width:850px){.shell{display:block}.sidebar{height:auto;position:static;border-right:0;border-bottom:1px solid var(--line)}.nav{display:flex;overflow:auto;margin-top:22px}.side-foot{display:none}.metrics{grid-template-columns:repeat(2,1fr)}.workspace,.detail-grid,.installer-grid,.update-layout{grid-template-columns:1fr}.board{grid-template-columns:repeat(5,260px)}.installer-grid{padding-top:42px}}
+@media(max-width:520px){.metrics,.services,.install-steps,.form-columns{grid-template-columns:1fr}.main{padding:24px 16px}.topbar{align-items:flex-start}.button{font-size:12px}.project-page{padding:22px 14px 60px}.action-card{align-items:flex-start;flex-direction:column}.action-card form,.action-card button{width:100%}.inline-form{align-items:stretch;flex-direction:column}.decision-row{flex-direction:column}}

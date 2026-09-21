@@ -44,6 +44,15 @@ enum ClientActionStatus {
   CANCELLED
 }
 
+enum ChangeRequestStatus {
+  SUBMITTED
+  REVIEWING
+  QUOTED
+  APPROVED
+  DECLINED
+  COMPLETED
+}
+
 model Client {
   id        String    @id @default(cuid())
   email     String    @unique
@@ -78,6 +87,7 @@ model Project {
   comments                 Comment[]
   clientActions            ClientAction[]
   attachments              Attachment[]
+  changeRequests           ChangeRequest[]
   accessTokens             ClientAccessToken[]
   events                   ProjectEvent[]
   createdAt                DateTime      @default(now())
@@ -85,6 +95,37 @@ model Project {
 
   @@index([status, updatedAt])
   @@index([clientId, createdAt])
+}
+
+model SystemSetting {
+  key       String   @id
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProjectTemplate {
+  id          String         @id @default(cuid())
+  slug        String         @unique
+  name        String
+  description String?        @db.Text
+  category    String?
+  active      Boolean        @default(true)
+  tasks       TemplateTask[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model TemplateTask {
+  id              String          @id @default(cuid())
+  templateId      String
+  template        ProjectTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  title           String
+  description     String?         @db.Text
+  sortOrder       Int             @default(0)
+  visibleToClient Boolean         @default(true)
+
+  @@index([templateId, sortOrder])
 }
 
 model Task {
@@ -167,6 +208,24 @@ model Attachment {
 
   @@unique([projectId, storageKey, version])
   @@index([projectId, createdAt])
+}
+
+model ChangeRequest {
+  id              String              @id @default(cuid())
+  projectId       String
+  project         Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title           String
+  description     String              @db.Text
+  status          ChangeRequestStatus @default(SUBMITTED)
+  requestedBy     String
+  estimatedAmount Decimal?            @db.Decimal(12, 2)
+  currency        String              @default("EUR")
+  estimatedDays   Int?
+  adminResponse   String?             @db.Text
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@index([projectId, status, createdAt])
 }
 
 model ClientAccessToken {
