@@ -23,3 +23,18 @@ export async function addClientComment(formData: FormData) {
   await prisma.$transaction([prisma.comment.create({ data: { projectId: project.id, authorName: project.client.name, body, visibleToClient: true } }), prisma.projectEvent.create({ data: { projectId: project.id, type: "CLIENT_COMMENT", message: "Client added a comment" } })]);
   revalidatePath(`/client/project/${key}`); revalidatePath(`/dashboard/projects/${project.id}`);
 }
+
+export async function submitChangeRequest(formData: FormData) {
+  const key = String(formData.get("key") ?? ""); const token = String(formData.get("token") ?? ""); const title = String(formData.get("title") ?? "").trim().slice(0, 180); const description = String(formData.get("description") ?? "").trim().slice(0, 5000);
+  const project = await authorizedProject(key, token); if (!project || !title || !description) return;
+  await prisma.$transaction([prisma.changeRequest.create({ data: { projectId: project.id, title, description, requestedBy: project.client.name } }), prisma.projectEvent.create({ data: { projectId: project.id, type: "CHANGE_REQUEST_SUBMITTED", message: `Change requested: ${title}` } })]);
+  revalidatePath(`/client/project/${key}`); revalidatePath(`/dashboard/projects/${project.id}`);
+}
+
+export async function decideChangeRequest(formData: FormData) {
+  const key = String(formData.get("key") ?? ""); const token = String(formData.get("token") ?? ""); const requestId = String(formData.get("requestId") ?? ""); const decision = String(formData.get("decision") ?? "");
+  const project = await authorizedProject(key, token); if (!project || !["APPROVED", "DECLINED"].includes(decision)) return;
+  const request = await prisma.changeRequest.findFirst({ where: { id: requestId, projectId: project.id, status: "QUOTED" } }); if (!request) return;
+  await prisma.$transaction([prisma.changeRequest.update({ where: { id: request.id }, data: { status: decision === "APPROVED" ? "APPROVED" : "DECLINED" } }), prisma.projectEvent.create({ data: { projectId: project.id, type: "CHANGE_REQUEST_DECIDED", message: `Client ${decision.toLowerCase()} change request: ${request.title}` } })]);
+  revalidatePath(`/client/project/${key}`); revalidatePath(`/dashboard/projects/${project.id}`);
+}

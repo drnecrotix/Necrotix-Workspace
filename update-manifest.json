@@ -1,0 +1,10 @@
+{
+  "version": "0.2.0",
+  "minimumNode": "22",
+  "releasedAt": "2026-09-21T00:00:00.000Z",
+  "notes": [
+    "First-run CMS installer with permanent installation lock",
+    "Project templates and change-request foundation",
+    "Workspace update center"
+  ]
+}

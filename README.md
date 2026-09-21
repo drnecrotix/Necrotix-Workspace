@@ -8,13 +8,18 @@ When a service request is accepted in NecrotixLab, the server sends a signed, on
 
 ## Current foundation
 
+- One-time `/install` flow protected by `INSTALL_TOKEN`; it returns 404 after successful setup
+- Default Web, Security and Engineering project templates
 - Operations dashboard for projects, tasks and client work
 - Database-backed delivery metrics and recent activity
 - Five-column project task board with auditable status changes
 - Milestones and client action requests
 - Client-visible comments and private internal notes
 - Client completion flow for requested actions
+- Drag-and-drop task movement with an auditable server-side update
+- Scoped change requests with estimates and client approval or rejection
 - Version-ready file metadata model with a storage-provider boundary
+- Update Center backed by a release manifest and hosting deployment hook
 - Private client project view with hashed, expiring access tokens
 - HMAC-SHA256 integration endpoint with five-minute timestamp tolerance
 - Nonce and service-request replay protection
@@ -46,7 +51,9 @@ npm run db:migrate
 npm run dev
 ```
 
-Open `http://localhost:3000`. Admin access uses the server-configured `ADMIN_ACCESS_KEY`. Production is intended for `projects.necrotixlab.com`.
+Open `http://localhost:3000/install` once and use the server-configured `INSTALL_TOKEN`. After setup the installer is permanently locked by the database installation record and responds with 404. Admin access uses `ADMIN_ACCESS_KEY`. Production is intended for `projects.necrotixlab.com`.
+
+The production start command applies pending Prisma migrations before starting Next.js. The Update Center compares `package.json` with `WORKSPACE_UPDATE_MANIFEST_URL` and calls `WORKSPACE_DEPLOY_HOOK_URL` when an update is approved. The deployment provider remains responsible for checkout, build, activation and rollback.
 
 ## Deployment boundaries
 
@@ -57,8 +64,8 @@ Open `http://localhost:3000`. Admin access uses the server-configured `ADMIN_ACC
 
 ## Roadmap
 
-- Drag-and-drop task ordering and reusable project templates
-- Client approvals, change requests and secure object-storage uploads
+- Drag-and-drop ordering within columns and template editing
+- Secure object-storage uploads and file previews
 - Time tracking, budget stages and invoices
 - Calendar, saved filters and scheduled reminders
 - Outbound signed status webhooks to NecrotixLab
