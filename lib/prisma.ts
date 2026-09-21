@@ -1,0 +1,7 @@
+import { PrismaClient } from "@prisma/client";
+
+const scope = globalThis as unknown as { prisma?: PrismaClient };
+
+export const prisma = scope.prisma ?? new PrismaClient();
+
+if (process.env.NODE_ENV !== "production") scope.prisma = prisma;
