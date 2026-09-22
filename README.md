@@ -18,7 +18,8 @@ When a service request is accepted in NecrotixLab, the server sends a signed, on
 - Client completion flow for requested actions
 - Drag-and-drop task movement with an auditable server-side update
 - Scoped change requests with estimates and client approval or rejection
-- Version-ready file metadata model with a storage-provider boundary
+- Local file uploads, version history and client-authorized downloads
+- Server-side import from public URLs with SSRF and file-size protection
 - Update Center backed by a release manifest and hosting deployment hook
 - Private client project view with hashed, expiring access tokens
 - HMAC-SHA256 integration endpoint with five-minute timestamp tolerance
@@ -55,6 +56,8 @@ Open `http://localhost:3000/install` once and use the server-configured `INSTALL
 
 The production start command applies pending Prisma migrations before starting Next.js. The Update Center compares `package.json` with `WORKSPACE_UPDATE_MANIFEST_URL` and calls `WORKSPACE_DEPLOY_HOOK_URL` when an update is approved. The deployment provider remains responsible for checkout, build, activation and rollback.
 
+Files use local storage by default. Set `WORKSPACE_STORAGE_PATH` to a persistent, non-public volume and `WORKSPACE_MAX_FILE_BYTES` to the maximum accepted upload size in bytes. URL imports accept public HTTP(S) addresses only, re-check redirects and reject local or private network destinations.
+
 ## Deployment boundaries
 
 - Separate GitHub repository and release history
@@ -65,7 +68,7 @@ The production start command applies pending Prisma migrations before starting N
 ## Roadmap
 
 - Drag-and-drop ordering within columns and template editing
-- Secure object-storage uploads and file previews
+- Optional Dropbox, Google Drive and MEGA storage adapters and file previews
 - Time tracking, budget stages and invoices
 - Calendar, saved filters and scheduled reminders
 - Outbound signed status webhooks to NecrotixLab

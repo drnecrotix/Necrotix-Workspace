@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { ChangeRequestStatus, TaskStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { downloadRemoteFile, safeFileName, saveLocalFile, storageLimitBytes } from "@/lib/storage";
 
 const taskStatuses = new Set(Object.values(TaskStatus));
 
@@ -67,4 +68,30 @@ export async function reviewChangeRequest(formData: FormData) {
   const amount = amountText ? Number(amountText) : null; const days = daysText ? Number.parseInt(daysText, 10) : null;
   await prisma.$transaction([prisma.changeRequest.update({ where: { id: requestId }, data: { status, adminResponse: response || null, estimatedAmount: Number.isFinite(amount) ? amount : null, estimatedDays: Number.isFinite(days) ? days : null } }), prisma.projectEvent.create({ data: { projectId, type: "CHANGE_REQUEST_UPDATED", message: `Change request ${request.title} is now ${status.replaceAll("_", " ")}` } })]);
   revalidatePath(`/dashboard/projects/${projectId}`);
+}
+
+async function nextFileVersion(projectId: string, fileName: string) {
+  const storageKey = `${projectId}/${safeFileName(fileName)}`;
+  const latest = await prisma.attachment.findFirst({ where: { projectId, storageKey }, orderBy: { version: "desc" }, select: { version: true } });
+  return (latest?.version ?? 0) + 1;
+}
+
+async function createAttachment(projectId: string, fileName: string, bytes: Buffer, mimeType: string, visibleToClient: boolean, metadata: Record<string, string>) {
+  const project = await prisma.project.findUnique({ where: { id: projectId }, select: { id: true } }); if (!project) return;
+  const version = await nextFileVersion(projectId, fileName);
+  const stored = await saveLocalFile(projectId, fileName, bytes, mimeType, version);
+  await prisma.$transaction([prisma.attachment.create({ data: { projectId, fileName: safeFileName(fileName), visibleToClient, metadata, ...stored } }), prisma.projectEvent.create({ data: { projectId, type: "FILE_ADDED", message: `File added: ${safeFileName(fileName)} (v${version})` } })]);
+  revalidatePath(`/dashboard/projects/${projectId}`);
+}
+
+export async function uploadProjectFile(formData: FormData) {
+  const projectId = String(formData.get("projectId") ?? ""); const file = formData.get("file");
+  if (!projectId || !(file instanceof File) || !file.name || file.size === 0 || file.size > storageLimitBytes()) return;
+  await createAttachment(projectId, file.name, Buffer.from(await file.arrayBuffer()), file.type || "application/octet-stream", formData.get("visibleToClient") === "on", { provider: "local", source: "upload" });
+}
+
+export async function importProjectFileFromUrl(formData: FormData) {
+  const projectId = String(formData.get("projectId") ?? ""); const source = String(formData.get("sourceUrl") ?? "").trim(); if (!projectId || !source) return;
+  const remote = await downloadRemoteFile(source);
+  await createAttachment(projectId, remote.fileName, remote.bytes, remote.mimeType, formData.get("visibleToClient") === "on", { provider: "local", source: "url", sourceUrl: remote.sourceUrl });
 }
