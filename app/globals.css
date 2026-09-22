@@ -103,5 +103,8 @@ select:focus,input:focus,textarea:focus { outline:2px solid #b8ff3d55; border-co
 .pipeline { margin:0; padding:0; list-style:none; counter-reset:pipe; }
 .pipeline li { counter-increment:pipe; border-top:1px solid var(--line); padding:13px 0; color:#c8cec9; }
 .pipeline li:before { content:counter(pipe); display:inline-grid; place-items:center; width:22px; height:22px; margin-right:9px; border:1px solid #40512b; color:var(--acid); border-radius:50%; font-size:10px; }
+.file-link:hover { color:var(--acid); }
+.file-add { border-top:1px solid var(--line); padding:13px 0; }
+.file-add summary { cursor:pointer; color:#c8cec9; font-size:13px; }
 @media(max-width:850px){.shell{display:block}.sidebar{height:auto;position:static;border-right:0;border-bottom:1px solid var(--line)}.nav{display:flex;overflow:auto;margin-top:22px}.side-foot{display:none}.metrics{grid-template-columns:repeat(2,1fr)}.workspace,.detail-grid,.installer-grid,.update-layout{grid-template-columns:1fr}.board{grid-template-columns:repeat(5,260px)}.installer-grid{padding-top:42px}}
 @media(max-width:520px){.metrics,.services,.install-steps,.form-columns{grid-template-columns:1fr}.main{padding:24px 16px}.topbar{align-items:flex-start}.button{font-size:12px}.project-page{padding:22px 14px 60px}.action-card{align-items:flex-start;flex-direction:column}.action-card form,.action-card button{width:100%}.inline-form{align-items:stretch;flex-direction:column}.decision-row{flex-direction:column}}
